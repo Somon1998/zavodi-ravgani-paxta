@@ -2,6 +2,27 @@ import Image from "next/image";
 import { site, contactLinks } from "@/data/site";
 import { MobileMenu } from "./mobile-menu";
 
+function PhoneIcon() {
+  return (
+    <svg
+      className="phone-icon"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function Brand() {
   return (
     <a className="brand" href="#home" aria-label={`${site.name} — на главную`}>
@@ -14,6 +35,7 @@ export function Brand() {
   );
 }
 export function Header() {
+  const phone = contactLinks().find((item) => item.label === "Телефон");
   return (
     <header className="header">
       <div className="container header-inner">
@@ -25,9 +47,12 @@ export function Header() {
             </a>
           ))}
         </nav>
-        <a className="button button-green header-contact" href="#contacts">
-          Связаться с нами <span aria-hidden="true">↗</span>
-        </a>
+        {phone && (
+          <a className="button button-green header-contact" href={phone.href}>
+            {phone.text}
+            <PhoneIcon />
+          </a>
+        )}
         <MobileMenu />
       </div>
     </header>
@@ -64,7 +89,9 @@ export function Footer() {
           <span>
             © {new Date().getFullYear()} {site.name}
           </span>
-          <span>{site.location} · Готовимся к открытию</span>
+          <span className="footer-location">
+            {site.contacts.address} · Готовимся к открытию
+          </span>
         </div>
       </div>
     </footer>

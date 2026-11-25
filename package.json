@@ -10,7 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
     "qr": "node scripts/generate-qr.mjs",
-    "format": "prettier --write src tests scripts *.ts *.mjs *.json"
+    "format": "prettier --write src tests scripts *.ts *.mjs *.json",
+    "test:qr": "node --test scripts/qr-assets.test.mjs"
   },
   "dependencies": {
     "next": "16.4.6",

@@ -1,15 +1,29 @@
-// Единственное место для замены временного бренда и сведений заказчика.
+// Подтверждённые сведения заказчика. SVG-знак пока временный.
+const brandName = "Вахш Саноат";
+const aboutTitle = `О ${brandName}`;
+/** Официальный адрес предприятия — единый источник для Contacts и Footer. */
+const address =
+  "Республика Таджикистан, Хатлонская область, Кушониёнский район, Джамоат посёлок Бохтариён, село С.Шерози";
 export const site = {
-  name: "Маслозавод",
+  name: brandName,
+  aboutTitle,
   tagline: "Производство растительного масла",
   logo: "/logo/cotton.svg",
-  description:
-    "Новое предприятие по производству растительного масла в Таджикистане готовится к открытию.",
-  location: "Бохтар, Таджикистан",
-  contacts: { phone: "", whatsapp: "", email: "", address: "" },
+  description: `«${brandName}» — новое предприятие по производству хлопкового масла в Таджикистане. Готовимся к открытию.`,
+  region: "Хатлонская область",
+  district: "Кушониёнский район",
+  location: address,
+  contacts: {
+    phone: "+992 88 844 3588",
+    whatsapp: "+992 88 844 3588",
+    whatsappMessage:
+      "Здравствуйте! Меня интересует продукция „Вахш Саноат“. Хотел бы получить дополнительную информацию",
+    email: "",
+    address,
+  },
   navigation: [
     { href: "#home", label: "Главная" },
-    { href: "#about", label: "О заводе" },
+    { href: "#about", label: aboutTitle },
     { href: "#production", label: "Производство" },
     { href: "#products", label: "Продукция" },
     { href: "#contacts", label: "Контакты" },
@@ -20,28 +34,24 @@ export const site = {
     {
       title: "Хлопковое растение",
       text: "От растения начинается история хлопкового масла.",
-      image: "/images/cotton.webp",
-      alt: "Иллюстрация белого хлопка на ветке",
     },
     {
       title: "Сырьё для производства",
       text: "Семена хлопчатника — сырьё для хлопкового масла.",
-      image: "/images/seeds.webp",
-      alt: "Иллюстрация семян хлопчатника",
     },
     {
       title: "Растительное масло",
       text: "Направление будущего производства нашего предприятия.",
-      image: "/images/oil.webp",
-      alt: "Иллюстрация золотистого растительного масла",
     },
   ],
   products: [
     {
-      name: "Хлопковое масло",
+      name: `Хлопковое масло «${brandName}»`,
+      nameTg: "Равғани пахта",
       description:
         "Растительное масло из семян хлопчатника. Подробная информация о продукте появится после открытия предприятия.",
-      image: "/images/product.webp",
+      image: "/images/vakhsh-sanoat-product.webp",
+      imageAlt: `Предварительный макет бутылки и этикетки «${brandName}», предоставленный заказчиком`,
     },
   ],
 };
@@ -57,7 +67,8 @@ function getSiteUrl() {
 export const siteUrl = getSiteUrl();
 
 export function contactLinks() {
-  const { phone, whatsapp, email, address } = site.contacts;
+  // Адрес выводится отдельно в Contacts и Footer из site.contacts.address.
+  const { phone, whatsapp, whatsappMessage, email } = site.contacts;
   return [
     phone && {
       label: "Телефон",
@@ -67,14 +78,13 @@ export function contactLinks() {
     whatsapp && {
       label: "WhatsApp",
       text: "Написать в WhatsApp",
-      href: `https://wa.me/${whatsapp.replace(/\D/g, "")}`,
+      href: `https://wa.me/${whatsapp.replace(/\D/g, "")}${whatsappMessage ? `?text=${encodeURIComponent(whatsappMessage)}` : ""}`,
     },
     email && {
       label: "Электронная почта",
       text: email,
       href: `mailto:${email}`,
     },
-    address && { label: "Адрес", text: address, href: "" },
   ].filter((item): item is { label: string; text: string; href: string } =>
     Boolean(item),
   );
