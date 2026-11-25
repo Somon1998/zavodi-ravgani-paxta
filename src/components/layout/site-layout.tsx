@@ -1,5 +1,8 @@
 import Image from "next/image";
-import { site, contactLinks } from "@/data/site";
+import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import { contactLinks, navigation, siteAssets } from "@/data/site";
+import { LanguageSwitcher } from "./language-switcher";
 import { MobileMenu } from "./mobile-menu";
 
 function PhoneIcon() {
@@ -23,74 +26,93 @@ function PhoneIcon() {
   );
 }
 
-export function Brand() {
+type LayoutProps = {
+  locale: Locale;
+  dict: Dictionary;
+};
+
+export function Brand({ dict }: { dict: Dictionary }) {
   return (
-    <a className="brand" href="#home" aria-label={`${site.name} — на главную`}>
-      <Image src={site.logo} width={48} height={56} alt="" />
-      <span>
-        <strong>{site.name}</strong>
-        <small>{site.tagline}</small>
+    <a className="brand" href="#home" aria-label={dict.brand.homeAria}>
+      <Image src={siteAssets.logo} width={48} height={56} alt="" />
+      <span className="brand-text">
+        <strong>{dict.brand.name}</strong>
+        <small className="brand-tagline">{dict.brand.tagline}</small>
       </span>
     </a>
   );
 }
-export function Header() {
-  const phone = contactLinks().find((item) => item.label === "Телефон");
+
+export function Header({ locale, dict }: LayoutProps) {
+  const phone = contactLinks(dict).find((item) => item.id === "phone");
+  const links = navigation(dict);
+
   return (
     <header className="header">
       <div className="container header-inner">
-        <Brand />
-        <nav className="desktop-nav" aria-label="Основная навигация">
-          {site.navigation.map((link) => (
+        <Brand dict={dict} />
+        <nav className="desktop-nav" aria-label={dict.a11y.mainNav}>
+          {links.map((link) => (
             <a key={link.href} href={link.href}>
               {link.label}
             </a>
           ))}
         </nav>
-        {phone && (
-          <a className="button button-green header-contact" href={phone.href}>
-            {phone.text}
-            <PhoneIcon />
-          </a>
-        )}
-        <MobileMenu />
+        <div className="header-actions">
+          <LanguageSwitcher
+            locale={locale}
+            label={dict.a11y.languageSwitcher}
+            variant="header"
+          />
+          {phone && (
+            <a className="button button-green header-contact" href={phone.href}>
+              {phone.text}
+              <PhoneIcon />
+            </a>
+          )}
+          <MobileMenu dict={dict} />
+        </div>
       </div>
     </header>
   );
 }
-export function Footer() {
+
+export function Footer({ dict }: { dict: Dictionary }) {
+  const links = navigation(dict);
+  const contacts = contactLinks(dict);
+
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-top">
-          <Brand />
-          <nav aria-label="Навигация в подвале">
-            {site.navigation.slice(1).map((link) => (
+          <Brand dict={dict} />
+          <nav aria-label={dict.a11y.footerNav}>
+            {links.slice(1).map((link) => (
               <a key={link.href} href={link.href}>
                 {link.label}
               </a>
             ))}
           </nav>
         </div>
-        {contactLinks().length > 0 && (
+        {contacts.length > 0 && (
           <div className="footer-contacts">
-            {contactLinks().map((item) =>
+            {contacts.map((item) =>
               item.href ? (
-                <a key={item.label} href={item.href}>
+                <a key={item.id} href={item.href}>
                   {item.text}
                 </a>
               ) : (
-                <span key={item.label}>{item.text}</span>
+                <span key={item.id}>{item.text}</span>
               ),
             )}
           </div>
         )}
         <div className="footer-bottom">
           <span>
-            © {new Date().getFullYear()} {site.name}
+            © {new Date().getFullYear()} {dict.brand.name}
           </span>
           <span className="footer-location">
-            {site.contacts.address} · Готовимся к открытию
+            {dict.location.address} · {dict.footer.opening}
           </span>
         </div>
       </div>

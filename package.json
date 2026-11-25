@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
-    "build": "next build --webpack",
-    "start": "next start",
+    "dev": "node scripts/generate-seo.mjs && next dev --webpack",
+    "build": "node scripts/generate-seo.mjs && next build --webpack",
+    "start": "node scripts/serve-out.mjs",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
     "qr": "node scripts/generate-qr.mjs",
+    "seo": "node scripts/generate-seo.mjs",
     "format": "prettier --write src tests scripts *.ts *.mjs *.json",
     "test:qr": "node --test scripts/qr-assets.test.mjs"
   },

@@ -1,17 +1,22 @@
 import Image from "next/image";
-import { site, contactLinks } from "@/data/site";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import { contactLinks, siteAssets } from "@/data/site";
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
 }
 
-export function Hero() {
+type SectionProps = {
+  dict: Dictionary;
+};
+
+export function Hero({ dict }: SectionProps) {
   return (
     <section className="hero" id="home" aria-labelledby="hero-title">
       <Image
         className="hero-photo"
-        src="/images/hero.webp"
-        alt="Демонстрационная иллюстрация производства масла, не фотография нашего предприятия"
+        src={siteAssets.heroImage}
+        alt={dict.hero.imageAlt}
         fill
         priority
         sizes="100vw"
@@ -20,42 +25,42 @@ export function Hero() {
       <div className="container hero-content">
         <div className="eyebrow hero-status">
           <span className="status-dot" />
-          Готовимся к открытию
+          {dict.hero.status}
         </div>
         <h1 id="hero-title">
-          Растительное масло <span>от производителя</span>
+          {dict.hero.title} <span>{dict.hero.titleAccent}</span>
         </h1>
-        <p>{site.description}</p>
+        <p>{dict.hero.description}</p>
         <div className="hero-actions">
           <a className="button button-gold" href="#products">
-            Наша продукция <span aria-hidden="true">→</span>
+            {dict.hero.ctaProducts} <span aria-hidden="true">→</span>
           </a>
           <a className="button button-outline" href="#about">
-            {site.aboutTitle} <Arrow />
+            {dict.hero.ctaAbout} <Arrow />
           </a>
         </div>
         <div className="hero-facts">
-          <div>
+          <div className="hero-fact">
             <span className="fact-symbol" aria-hidden="true">
               ⌖
             </span>
             <span>
-              {site.region}
+              {dict.location.region},{" "}
               <br />
-              <strong>{site.district}</strong>
+              <strong>{dict.location.district}</strong>
             </span>
           </div>
-          <div>
-            <Image src={site.logo} width={34} height={38} alt="" />
+          <div className="hero-fact">
+            <Image src={siteAssets.logo} width={34} height={38} alt="" />
             <span>
-              Наше направление
+              {dict.hero.directionLabel} —{" "}
               <br />
-              <strong>хлопковое масло</strong>
+              <strong>{dict.hero.directionValue}</strong>
             </span>
           </div>
         </div>
+        <p className="hero-caption">{dict.hero.caption}</p>
       </div>
-      <span className="hero-caption">Иллюстрация будущего производства</span>
       <svg
         className="hero-wave"
         viewBox="0 0 1440 70"
@@ -74,35 +79,36 @@ export function Hero() {
     </section>
   );
 }
-export function About() {
+
+export function About({ dict }: SectionProps) {
   return (
     <section id="about" className="section about">
       <div className="container about-grid">
         <div>
-          <h2>{site.aboutTitle}</h2>
-          <p className="body-copy">{site.about}</p>
+          <h2>{dict.about.title}</h2>
+          <p className="body-copy">{dict.about.text}</p>
           <a href="#production" className="button button-green about-link">
-            Подробнее о производстве <span aria-hidden="true">→</span>
+            {dict.about.moreProduction} <span aria-hidden="true">→</span>
           </a>
         </div>
-        <ul className="about-facts" aria-label="Коротко о предприятии">
+        <ul className="about-facts" aria-label={dict.a11y.aboutFacts}>
           <li>
             <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
               <path d="M20 36S7 23 7 15a13 13 0 0 1 26 0c0 8-13 21-13 21Z" />
               <circle cx="20" cy="15" r="5" />
             </svg>
             <span>
-              {site.region}
+              {dict.location.region}
               <br />
-              {site.district}
+              {dict.location.district}
             </span>
           </li>
           <li>
-            <Image src={site.logo} alt="" width={40} height={46} />
+            <Image src={siteAssets.logo} alt="" width={40} height={46} />
             <span>
-              Хлопковое
+              {dict.about.cottonLine1}
               <br />
-              масло
+              {dict.about.cottonLine2}
             </span>
           </li>
           <li>
@@ -111,8 +117,9 @@ export function About() {
               <path d="M20 9v12l8 5" />
             </svg>
             <span>
-              Готовимся
-              <br />к открытию
+              {dict.about.openingLine1}
+              <br />
+              {dict.about.openingLine2}
             </span>
           </li>
         </ul>
@@ -120,22 +127,16 @@ export function About() {
     </section>
   );
 }
-export function Production() {
+
+export function Production({ dict }: SectionProps) {
   return (
     <section id="production" className="section production">
       <div className="container">
         <div className="section-heading">
-          <div>
-            <h2>Производство</h2>
-          </div>
-          <p className="section-aside">
-            Знакомимся с хлопком и маслом.
-            <br />
-            Подробности о заводе — после открытия.
-          </p>
+          <h2>{dict.production.title}</h2>
         </div>
         <div className="production-grid">
-          {site.production.map((item, i) => (
+          {dict.production.items.map((item, i) => (
             <article className="process-card" key={item.title}>
               <span className="process-number">0{i + 1}</span>
               <h3>{item.title}</h3>
@@ -147,25 +148,24 @@ export function Production() {
     </section>
   );
 }
-export function Products() {
+
+export function Products({ dict }: SectionProps) {
   return (
     <section id="products" className="section products">
       <div className="container">
         <div className="products-intro">
-          <h2>Наша продукция</h2>
-          <p className="body-copy">
-            Наше направление — производство хлопкового растительного масла.
-          </p>
+          <h2>{dict.products.title}</h2>
+          <p className="body-copy">{dict.products.intro}</p>
           <a className="text-link" href="#contacts">
-            Контактная информация <span aria-hidden="true">→</span>
+            {dict.products.contactLink} <span aria-hidden="true">→</span>
           </a>
         </div>
-        {site.products.map((product) => (
+        {dict.products.items.map((product) => (
           <article className="product-card" key={product.name}>
             <figure className="product-visual">
               <div className="product-image">
                 <Image
-                  src={product.image}
+                  src={siteAssets.productImage}
                   alt={product.imageAlt}
                   fill
                   sizes="(max-width: 639px) 100vw, (max-width: 1199px) 55vw, 640px"
@@ -174,10 +174,10 @@ export function Products() {
               </div>
             </figure>
             <div className="product-info">
-              <span className="eyebrow">Готовимся к выпуску</span>
+              <span className="eyebrow">{dict.products.eyebrow}</span>
               <h3>{product.name}</h3>
-              <p lang="tg" className="product-name-tg">
-                {product.nameTg}
+              <p lang={product.secondaryLang} className="product-name-tg">
+                {product.secondaryName}
               </p>
               <p>{product.description}</p>
             </div>
@@ -187,6 +187,7 @@ export function Products() {
     </section>
   );
 }
+
 function MapPinIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -197,13 +198,7 @@ function MapPinIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <circle
-        cx="12"
-        cy="10"
-        r="3"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
+      <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }
@@ -233,30 +228,28 @@ function WhatsAppIcon() {
   );
 }
 
-export function Contacts() {
-  const links = contactLinks();
-  const phone = links.find((item) => item.label === "Телефон");
-  const whatsapp = links.find((item) => item.label === "WhatsApp");
+export function Contacts({ dict }: SectionProps) {
+  const links = contactLinks(dict);
+  const phone = links.find((item) => item.id === "phone");
+  const whatsapp = links.find((item) => item.id === "whatsapp");
 
   return (
     <section id="contacts" className="section contacts">
       <div className="container">
         <div className="contacts-panel">
           <div className="contacts-intro">
-            <h2>Контакты</h2>
-            <p className="contacts-lead">
-              Свяжитесь с нами по вопросам продукции и сотрудничества
-            </p>
+            <h2>{dict.contacts.title}</h2>
+            <p className="contacts-lead">{dict.contacts.lead}</p>
           </div>
-          <ul className="contact-list" aria-label="Контактная информация">
+          <ul className="contact-list" aria-label={dict.a11y.contactsList}>
             <li className="contact-item">
               <span className="contact-icon" aria-hidden="true">
                 <MapPinIcon />
               </span>
               <div className="contact-body">
-                <span className="contact-label">Адрес</span>
+                <span className="contact-label">{dict.contacts.addressLabel}</span>
                 <p className="contact-value contact-address">
-                  {site.contacts.address}
+                  {dict.location.address}
                 </p>
               </div>
             </li>
@@ -267,7 +260,7 @@ export function Contacts() {
                     <PhoneContactIcon />
                   </span>
                   <span className="contact-body">
-                    <span className="contact-label">Телефон</span>
+                    <span className="contact-label">{phone.label}</span>
                     <span className="contact-value">{phone.text}</span>
                   </span>
                 </a>
@@ -283,7 +276,7 @@ export function Contacts() {
                     <WhatsAppIcon />
                   </span>
                   <span className="contact-body">
-                    <span className="contact-label">WhatsApp</span>
+                    <span className="contact-label">{whatsapp.label}</span>
                     <span className="contact-value">{whatsapp.text}</span>
                   </span>
                 </a>

@@ -9,10 +9,14 @@ export default defineConfig({
     reducedMotion: "reduce",
   },
   webServer: {
-    command: "npm run start -- --hostname 127.0.0.1 --port 3100",
+    command: "npm run start",
     url: "http://127.0.0.1:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 60000,
+    env: {
+      HOST: "127.0.0.1",
+      PORT: "3100",
+    },
   },
 });
 

@@ -1,6 +1,8 @@
 "use client";
+
 import { useEffect, useRef, useState } from "react";
-import { site, contactLinks } from "@/data/site";
+import type { Dictionary } from "@/i18n/get-dictionary";
+import { contactLinks, navigation } from "@/data/site";
 
 function PhoneIcon() {
   return (
@@ -23,13 +25,21 @@ function PhoneIcon() {
   );
 }
 
-export function MobileMenu() {
+type Props = {
+  dict: Dictionary;
+};
+
+export function MobileMenu({ dict }: Props) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
-  const phone = contactLinks().find((item) => item.label === "Телефон");
+  const phone = contactLinks(dict).find((item) => item.id === "phone");
+  const links = navigation(dict);
+
   useEffect(() => {
     if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const escape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpen(false);
@@ -47,11 +57,13 @@ export function MobileMenu() {
     document.addEventListener("pointerdown", outside);
     media.addEventListener("change", resize);
     return () => {
+      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", escape);
       document.removeEventListener("pointerdown", outside);
       media.removeEventListener("change", resize);
     };
   }, [open]);
+
   return (
     <div
       ref={root}
@@ -63,7 +75,7 @@ export function MobileMenu() {
       <button
         ref={button}
         className="menu-toggle"
-        aria-label={open ? "Закрыть меню" : "Открыть меню"}
+        aria-label={open ? dict.a11y.closeMenu : dict.a11y.openMenu}
         aria-expanded={open}
         aria-controls="mobile-navigation"
         onClick={() => setOpen(!open)}
@@ -72,10 +84,10 @@ export function MobileMenu() {
       </button>
       <nav
         id="mobile-navigation"
-        aria-label="Мобильная навигация"
+        aria-label={dict.a11y.mobileNav}
         hidden={!open}
       >
-        {site.navigation.map((link) => (
+        {links.map((link) => (
           <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
             {link.label}
           </a>

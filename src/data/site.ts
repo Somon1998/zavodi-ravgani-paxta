@@ -1,60 +1,18 @@
-// Подтверждённые сведения заказчика. SVG-знак пока временный.
-const brandName = "Вахш Саноат";
-const aboutTitle = `О ${brandName}`;
-/** Официальный адрес предприятия — единый источник для Contacts и Footer. */
-const address =
-  "Республика Таджикистан, Хатлонская область, Кушониёнский район, Джамоат посёлок Бохтариён, село С.Шерози";
-export const site = {
-  name: brandName,
-  aboutTitle,
-  tagline: "Производство растительного масла",
+import type { Dictionary } from "@/i18n/get-dictionary";
+import { locales, type Locale } from "@/i18n/config";
+
+/** SVG-знак пока временный. Подтверждённые контактные данные — единый источник. */
+export const siteAssets = {
   logo: "/logo/cotton.svg",
-  description: `«${brandName}» — новое предприятие по производству хлопкового масла в Таджикистане. Готовимся к открытию.`,
-  region: "Хатлонская область",
-  district: "Кушониёнский район",
-  location: address,
-  contacts: {
-    phone: "+992 88 844 3588",
-    whatsapp: "+992 88 844 3588",
-    whatsappMessage:
-      "Здравствуйте! Меня интересует продукция „Вахш Саноат“. Хотел бы получить дополнительную информацию",
-    email: "",
-    address,
-  },
-  navigation: [
-    { href: "#home", label: "Главная" },
-    { href: "#about", label: aboutTitle },
-    { href: "#production", label: "Производство" },
-    { href: "#products", label: "Продукция" },
-    { href: "#contacts", label: "Контакты" },
-  ],
-  about:
-    "Наше предприятие готовится к открытию производства растительного масла. В ближайшее время здесь появится подробная информация о деятельности завода и выпускаемой продукции.",
-  production: [
-    {
-      title: "Хлопковое растение",
-      text: "От растения начинается история хлопкового масла.",
-    },
-    {
-      title: "Сырьё для производства",
-      text: "Семена хлопчатника — сырьё для хлопкового масла.",
-    },
-    {
-      title: "Растительное масло",
-      text: "Направление будущего производства нашего предприятия.",
-    },
-  ],
-  products: [
-    {
-      name: `Хлопковое масло «${brandName}»`,
-      nameTg: "Равғани пахта",
-      description:
-        "Растительное масло из семян хлопчатника. Подробная информация о продукте появится после открытия предприятия.",
-      image: "/images/vakhsh-sanoat-product.webp",
-      imageAlt: `Предварительный макет бутылки и этикетки «${brandName}», предоставленный заказчиком`,
-    },
-  ],
-};
+  heroImage: "/images/hero.webp",
+  productImage: "/images/vakhsh-sanoat-product.webp",
+} as const;
+
+export const siteContacts = {
+  phone: "+992 88 844 3588",
+  whatsapp: "+992 88 844 3588",
+  email: "",
+} as const;
 
 function getSiteUrl() {
   const value = process.env.NEXT_PUBLIC_SITE_URL;
@@ -64,28 +22,68 @@ function getSiteUrl() {
     throw new Error("NEXT_PUBLIC_SITE_URL должен начинаться с https://");
   return url.origin;
 }
+
 export const siteUrl = getSiteUrl();
 
-export function contactLinks() {
-  // Адрес выводится отдельно в Contacts и Footer из site.contacts.address.
-  const { phone, whatsapp, whatsappMessage, email } = site.contacts;
-  return [
-    phone && {
-      label: "Телефон",
+export function localeUrl(locale: Locale): string | undefined {
+  if (!siteUrl) return undefined;
+  return `${siteUrl}/${locale}/`;
+}
+
+export function hreflangMap(): Record<string, string> | undefined {
+  if (!siteUrl) return undefined;
+  const map: Record<string, string> = {
+    "x-default": `${siteUrl}/ru/`,
+  };
+  for (const locale of locales) {
+    map[locale] = `${siteUrl}/${locale}/`;
+  }
+  return map;
+}
+
+export type ContactLink = {
+  id: "phone" | "whatsapp" | "email";
+  label: string;
+  text: string;
+  href: string;
+};
+
+export function contactLinks(dict: Dictionary): ContactLink[] {
+  const { phone, whatsapp, email } = siteContacts;
+  const links: ContactLink[] = [];
+  if (phone) {
+    links.push({
+      id: "phone",
+      label: dict.contacts.phoneLabel,
       text: phone,
       href: `tel:${phone.replace(/[^+\d]/g, "")}`,
-    },
-    whatsapp && {
-      label: "WhatsApp",
-      text: "Написать в WhatsApp",
-      href: `https://wa.me/${whatsapp.replace(/\D/g, "")}${whatsappMessage ? `?text=${encodeURIComponent(whatsappMessage)}` : ""}`,
-    },
-    email && {
-      label: "Электронная почта",
+    });
+  }
+  if (whatsapp) {
+    links.push({
+      id: "whatsapp",
+      label: dict.contacts.whatsappLabel,
+      text: dict.contacts.whatsappCta,
+      href: `https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(dict.contacts.whatsappMessage)}`,
+    });
+  }
+  if (email) {
+    links.push({
+      id: "email",
+      label: "Email",
       text: email,
       href: `mailto:${email}`,
-    },
-  ].filter((item): item is { label: string; text: string; href: string } =>
-    Boolean(item),
-  );
+    });
+  }
+  return links;
+}
+
+export function navigation(dict: Dictionary) {
+  return [
+    { href: "#home", label: dict.nav.home },
+    { href: "#about", label: dict.nav.about },
+    { href: "#production", label: dict.nav.production },
+    { href: "#products", label: dict.nav.products },
+    { href: "#contacts", label: dict.nav.contacts },
+  ] as const;
 }

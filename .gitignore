@@ -17,6 +17,10 @@
 /.next/
 /out/
 
+# SEO files generated at build/dev time from NEXT_PUBLIC_SITE_URL
+/public/robots.txt
+/public/sitemap.xml
+
 # production
 /build
 
