@@ -1,6 +1,9 @@
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { locales, type Locale } from "@/i18n/config";
 
+/** Официальный публичный домен. Используется по умолчанию для SEO. */
+export const OFFICIAL_SITE_URL = "https://vakhshsanoat.com";
+
 /** SVG-знак пока временный. Подтверждённые контактные данные — единый источник. */
 export const siteAssets = {
   logo: "/logo/cotton.svg",
@@ -15,8 +18,10 @@ export const siteContacts = {
 } as const;
 
 function getSiteUrl() {
-  const value = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!value) return undefined;
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  // Явный opt-out для локальных/preview сборок без индексации.
+  if (raw === "off" || raw === "none" || raw === "false") return undefined;
+  const value = raw || OFFICIAL_SITE_URL;
   const url = new URL(value);
   if (url.protocol !== "https:")
     throw new Error("NEXT_PUBLIC_SITE_URL должен начинаться с https://");

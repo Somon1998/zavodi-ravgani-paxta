@@ -553,6 +553,7 @@ test("SEO, hreflang и локальные ресурсы", async ({ request }) =
     "/tg/",
     "/en/",
     "/robots.txt",
+    "/sitemap.xml",
     "/favicon.ico",
     "/icon.svg",
     "/logo/cotton.svg",
@@ -560,10 +561,21 @@ test("SEO, hreflang и локальные ресурсы", async ({ request }) =
   ]) {
     expect((await request.get(path)).status(), path).toBe(200);
   }
-  expect(await (await request.get("/robots.txt")).text()).toContain(
-    "Disallow: /",
-  );
-  expect((await request.get("/sitemap.xml")).status()).toBe(404);
+
+  const robots = await (await request.get("/robots.txt")).text();
+  expect(robots).toContain("Allow: /");
+  expect(robots).not.toContain("Disallow: /");
+  expect(robots).toContain("Sitemap: https://vakhshsanoat.com/sitemap.xml");
+
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  expect(sitemap).toContain("https://vakhshsanoat.com/");
+  expect(sitemap).toContain("https://vakhshsanoat.com/ru/");
+  expect(sitemap).toContain("https://vakhshsanoat.com/tg/");
+  expect(sitemap).toContain("https://vakhshsanoat.com/en/");
+  expect(sitemap).toContain('hreflang="x-default"');
+  expect(sitemap).toContain('hreflang="ru"');
+  expect(sitemap).toContain('hreflang="tg"');
+  expect(sitemap).toContain('hreflang="en"');
 
   const ruHtml = await (await request.get("/ru/")).text();
   const tgHtml = await (await request.get("/tg/")).text();
@@ -571,8 +583,16 @@ test("SEO, hreflang и локальные ресурсы", async ({ request }) =
   expect(ruHtml).toMatch(/lang="ru"/i);
   expect(tgHtml).toMatch(/lang="tg"/i);
   expect(enHtml).toMatch(/lang="en"/i);
-  // Без NEXT_PUBLIC_SITE_URL абсолютные hreflang/canonical не публикуются.
-  expect(ruHtml).not.toMatch(/rel="canonical"/i);
+  expect(ruHtml).toMatch(
+    /rel="canonical" href="https:\/\/vakhshsanoat\.com\/ru\/"/i,
+  );
+  expect(ruHtml).toMatch(
+    /hreflang="tg" href="https:\/\/vakhshsanoat\.com\/tg\/"/i,
+  );
+  expect(ruHtml).toMatch(
+    /hreflang="en" href="https:\/\/vakhshsanoat\.com\/en\/"/i,
+  );
+  expect(ruHtml).not.toMatch(/noindex/i);
   expect(ruHtml).not.toMatch(/\/_next\/image/);
   expect(tgHtml).not.toMatch(/\/_next\/image/);
   expect(enHtml).not.toMatch(/\/_next\/image/);

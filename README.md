@@ -47,11 +47,11 @@ Next.js App Router 16.4.6, React 19.3, TypeScript, Tailwind CSS 4.3, Next Image,
 
 В этой Windows-среде Turbopack завершал дочерний процесс CSS до подключения. Поэтому dev/build используют официальный параметр `--webpack`, Tailwind подключён через PostCSS. См. https://nextjs.org/docs/app/api-reference/cli/next .
 
-## Подготовка к Vercel
+## Хостинг и SEO
 
-Проект готов к стандартному Next.js deployment: корень репозитория, `npm run build`, Node.js 22+. Публикация только после отдельного разрешения заказчика. До коммерческого запуска отдельно проверить актуальные условия тарифа Vercel для предприятия; в рамках этой задачи тариф не выбирался.
+Статический экспорт (`output: "export"`) для Cloudflare Pages: корень репозитория, `npm run build`, артефакт `out/`, Node.js 22+.
 
-После получения реального адреса скопировать .env.example в .env.local и задать NEXT_PUBLIC_SITE_URL=https://реальный-домен; на Vercel добавить эту переменную в настройки окружения и пересобрать проект. Это включит canonical, полную Open Graph-картинку, индексацию и реальный URL в sitemap.xml. Без переменной robots запрещает индексацию, sitemap пустой. Временные preview-развёртывания рекомендуется оставлять без этой переменной.
+Официальный домен: `https://vakhshsanoat.com`. По умолчанию сборка включает canonical, hreflang (ru/tg/en), Open Graph, `robots.txt` с `Allow: /` и `sitemap.xml`. Переопределение: `NEXT_PUBLIC_SITE_URL`. Отключить индексацию: `NEXT_PUBLIC_SITE_URL=off`. Preview на `*.pages.dev` дополнительно закрыт `X-Robots-Tag: noindex` в `public/_headers`.
 
 ## QR-код
 

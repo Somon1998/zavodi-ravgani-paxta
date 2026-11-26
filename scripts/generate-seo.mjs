@@ -6,10 +6,14 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const robotsPath = path.join(root, "public", "robots.txt");
 const sitemapPath = path.join(root, "public", "sitemap.xml");
 const locales = ["ru", "tg", "en"];
+/** Должен совпадать с OFFICIAL_SITE_URL в src/data/site.ts */
+const OFFICIAL_SITE_URL = "https://vakhshsanoat.com";
 
 function resolveSiteUrl() {
-  const value = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (!value) return undefined;
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  // Явный opt-out для локальных/preview сборок без индексации.
+  if (raw === "off" || raw === "none" || raw === "false") return undefined;
+  const value = raw || OFFICIAL_SITE_URL;
   let url;
   try {
     url = new URL(value);
@@ -88,6 +92,6 @@ if (siteUrl) {
   await writeFile(robotsPath, "User-agent: *\nDisallow: /\n", "utf8");
   await removeIfExists(sitemapPath);
   console.log(
-    "SEO: NEXT_PUBLIC_SITE_URL не задан — индексация запрещена, sitemap не публикуется",
+    "SEO: NEXT_PUBLIC_SITE_URL=off — индексация запрещена, sitemap не публикуется",
   );
 }
